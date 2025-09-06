@@ -7,6 +7,10 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" href="icons/maskable_icon_x48.png" type="image/png">
+
+<meta name="theme-color" content="#4F46E5">
     <style>
         * {
             margin: 0;
@@ -826,6 +830,65 @@
         .hidden {
             display: none;
         }
+        /* 🎬 Special Styling ONLY for PWA Install Button */
+#pwa-install-button {
+    background: linear-gradient(135deg, #e50914, #b81d24); /* Netflix red gradient */
+    color: #fff;
+    font-size: 0.95rem;
+    font-weight: 700;
+    padding: 0.85rem 1.6rem;
+    border-radius: 12px;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+#pwa-install-button:hover {
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 6px 20px rgba(229, 9, 20, 0.6);
+}
+
+/* ✨ Subtle shine effect */
+#pwa-install-button::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -60%;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(
+        120deg,
+        transparent,
+        rgba(255, 255, 255, 0.4),
+        transparent
+    );
+    transform: skewX(-20deg);
+}
+
+#pwa-install-button:hover::before {
+    animation: shine 1s forwards;
+}
+
+@keyframes shine {
+    0% { left: -60%; }
+    100% { left: 120%; }
+}
+
+/* Icon effect */
+#pwa-install-button i {
+    transition: transform 0.3s ease;
+}
+
+#pwa-install-button:hover i {
+    transform: scale(1.2);
+}
+
     </style>
 </head>
 <body>
@@ -843,6 +906,9 @@
                 <span id="themeIcon">🌙</span>
             </button>
             <a href="#analyzer" class="get-started-btn">Get Started</a>
+            <a href="#" id="pwa-install-button" class="get-started-btn ml-4" style="display: none;">
+    <i class="fa-solid fa-cloud-arrow-down mr-2"></i> Get Ambuj AI App
+</a>
         </div>
     </nav>
 
@@ -1780,5 +1846,41 @@ E-commerce Web Application
         // Initialize
         checkAnalyzeButton();
     </script>
+    <script>
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('/sw.js')
+                .then(reg => console.log('✅ Service Worker: Registered', reg))
+                .catch(err => console.log(`❌ Service Worker: Registration Error: ${err}`));
+        });
+    }
+
+    let deferredPrompt;
+    const installBtn = document.getElementById('pwa-install-button');
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+        if (installBtn) {
+            installBtn.style.display = 'inline-block';
+        }
+    });
+
+    if (installBtn) {
+        installBtn.addEventListener('click', () => {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt = null;
+            }
+        });
+    }
+
+    window.addEventListener('appinstalled', () => {
+        if (installBtn) {
+            installBtn.style.display = 'none';
+        }
+    });
+
+</script>
 </body>
 </html>
