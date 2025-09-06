@@ -61,7 +61,7 @@
 ## 👤 Author  
 
 **Ambuj Kumar Tripathi**  
-- 🌐 [Portfolio](https://ambuj-resume-intelligence.netlify.app/)  
+- 🌐 [Portfolio](https://ambuj123-lab.github.io/Ambuj_AI_Portfolio/)  
 - 🐙 [GitHub](https://github.com/Ambuj123-lab)  
 - 💼 AI Solutions Architect & Full-Stack Developer  
 
