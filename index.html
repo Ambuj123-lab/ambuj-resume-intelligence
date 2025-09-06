@@ -1,0 +1,1784 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume Intelligence by Ambuj Kumar Tripathi</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-dark: #0a0a0a;
+            --surface-dark: #1a1a1a;
+            --surface-lighter: #2a2a2a;
+            --accent-orange: #ff6b35;
+            --accent-yellow: #f7931e;
+            --accent-gradient: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+            --text-primary: #ffffff;
+            --text-secondary: #a0a0a0;
+            --border-subtle: rgba(255, 255, 255, 0.1);
+            --shadow-glow: 0 0 20px rgba(255, 107, 53, 0.3);
+            --creator-gradient: linear-gradient(135deg, #ff6b35, #f7931e, #ff8c42, #ffb347);
+            --electric-blue: #00d4ff;
+            --neon-purple: #b347ff;
+        }
+
+        [data-theme="light"] {
+            --bg-dark: #ffffff;
+            --surface-dark: #f8f9fa;
+            --surface-lighter: #ffffff;
+            --text-primary: #1a1a1a;
+            --text-secondary: #666666;
+            --border-subtle: rgba(0, 0, 0, 0.1);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            min-height: 100vh;
+            transition: all 0.3s ease;
+        }
+
+        /* Header Navigation */
+        .header-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+            background: var(--surface-dark);
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--accent-gradient);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .brand-name {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .nav-link:hover {
+            color: var(--text-primary);
+        }
+
+        .get-started-btn {
+            background: var(--accent-gradient);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .get-started-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-glow);
+        }
+
+        .theme-toggle {
+            background: var(--surface-lighter);
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+            margin-left: 1rem;
+        }
+
+        .theme-toggle:hover {
+            background: var(--accent-orange);
+            color: white;
+        }
+
+        /* Main Content */
+        .main-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+        }
+
+        /* Hero Section - Firebase Style */
+        .hero-section {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .hero-title {
+            font-size: clamp(3rem, 8vw, 6rem);
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 1rem;
+        }
+
+        .hero-highlight {
+            background: var(--accent-gradient);
+            color: white;
+            padding: 0.2em 0.6em;
+            border-radius: 12px;
+            display: inline-block;
+            transform: rotate(-2deg);
+            margin: 0 0.3rem;
+        }
+
+        .hero-subtitle {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto 2rem;
+            line-height: 1.6;
+        }
+
+        .creator-section {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .creator-avatar {
+            width: 250px;
+            height: 250px;
+            border-radius: 20px;
+            border: 4px solid var(--accent-orange);
+            object-fit: cover;
+            box-shadow: 0 12px 35px rgba(255, 107, 53, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        .creator-avatar:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 50px rgba(255, 107, 53, 0.6);
+        }
+
+        .creator-info {
+            text-align: left;
+        }
+
+        .creator-label {
+            font-size: 14px;
+            color: var(--text-secondary);
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .creator-name {
+            font-size: 28px;
+            font-weight: 700;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 12px;
+        }
+
+        .creator-title {
+            font-size: 18px;
+            color: var(--text-primary);
+            font-weight: 600;
+            min-height: 25px;
+            position: relative;
+        }
+
+        .typewriter-cursor {
+            display: inline-block;
+            background-color: var(--accent-orange);
+            margin-left: 3px;
+            width: 2px;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 50% {
+                opacity: 1;
+            }
+            51%, 100% {
+                opacity: 0;
+            }
+        }
+
+        .try-button {
+            background: var(--accent-gradient);
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 16px;
+            display: inline-block;
+            transition: all 0.3s ease;
+            margin-bottom: 3rem;
+        }
+
+        .try-button:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-glow);
+        }
+
+        /* Input Section - Firebase Style */
+        .input-section {
+            background: var(--surface-dark);
+            border: 2px solid var(--border-subtle);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 3rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .input-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--accent-gradient);
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            color: var(--text-primary);
+        }
+
+        .input-tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .input-tab {
+            background: transparent;
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
+            padding: 0.75rem 1.5rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .input-tab.active {
+            background: var(--accent-gradient);
+            border-color: transparent;
+            color: white;
+        }
+
+        .input-tab:hover:not(.active) {
+            border-color: var(--accent-orange);
+            color: var(--text-primary);
+        }
+
+        /* Upload Area */
+        .upload-area {
+            border: 2px dashed var(--border-subtle);
+            border-radius: 12px;
+            padding: 3rem 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            background: var(--surface-lighter);
+        }
+
+        .upload-area:hover {
+            border-color: var(--accent-orange);
+            background: rgba(255, 107, 53, 0.05);
+        }
+
+        .upload-area.dragover {
+            border-color: var(--accent-yellow);
+            background: rgba(247, 147, 30, 0.1);
+            transform: scale(1.02);
+        }
+
+        .upload-icon {
+            font-size: 3rem;
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+        }
+
+        .upload-text {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .upload-subtext {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            opacity: 0.7;
+        }
+
+        .browse-btn {
+            background: var(--accent-gradient);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .browse-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-glow);
+        }
+
+        /* Textarea */
+        .smart-textarea {
+            width: 100%;
+            height: 200px;
+            background: var(--surface-lighter);
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
+            padding: 1rem;
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 14px;
+            resize: vertical;
+            transition: all 0.3s ease;
+        }
+
+        .smart-textarea:focus {
+            outline: none;
+            border-color: var(--accent-orange);
+            box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
+        }
+
+        .smart-textarea::placeholder {
+            color: var(--text-secondary);
+            opacity: 0.7;
+        }
+
+        /* Analyze Button */
+        .analyze-btn {
+            background: var(--accent-gradient);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 2rem;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .analyze-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-glow);
+        }
+
+        .analyze-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Loading Animation */
+        .loading-section {
+            display: none;
+            text-align: center;
+            padding: 3rem 2rem;
+            background: var(--surface-dark);
+            border-radius: 16px;
+            margin: 2rem 0;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid var(--border-subtle);
+            border-top: 3px solid var(--accent-orange);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Results Section */
+        .results-section {
+            display: none;
+            background: var(--surface-dark);
+            border-radius: 16px;
+            padding: 2rem;
+            margin: 2rem 0;
+            border: 1px solid var(--border-subtle);
+        }
+
+        .results-title {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 2rem;
+            text-align: center;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .scores-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .score-card {
+            background: var(--surface-lighter);
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .score-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .score-value {
+            font-size: 2.5rem;
+            font-weight: 900;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+
+        .score-label {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+
+        /* Documentation Section */
+        .docs-section {
+            background: var(--surface-dark);
+            border-radius: 16px;
+            padding: 2rem;
+            margin: 3rem 0;
+            border: 1px solid var(--border-subtle);
+        }
+
+        .docs-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            justify-content: center;
+        }
+
+        .docs-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+        }
+
+        .docs-card {
+            background: var(--surface-lighter);
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .docs-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 30px rgba(255, 107, 53, 0.1);
+        }
+
+        .docs-card-header {
+            background: var(--accent-gradient);
+            color: white;
+            padding: 1.5rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .docs-expand-icon {
+            font-size: 1.2rem;
+            transition: transform 0.3s ease;
+        }
+
+        .docs-card-content {
+            padding: 0;
+            max-height: 0;
+            overflow: hidden;
+            transition: all 0.4s ease;
+        }
+
+        .docs-card-content.expanded {
+            padding: 1.5rem;
+            max-height: 1000px;
+        }
+
+        .docs-card-content p {
+            margin-bottom: 1rem;
+            line-height: 1.6;
+            color: var(--text-secondary);
+        }
+
+        .docs-card-content ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .docs-card-content li {
+            margin-bottom: 0.5rem;
+            padding-left: 1.5rem;
+            position: relative;
+            color: var(--text-secondary);
+        }
+
+        .docs-card-content li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: var(--accent-orange);
+            font-weight: bold;
+        }
+
+        /* Scoring Methodology Section */
+        .methodology-section {
+            background: var(--surface-dark);
+            border-radius: 16px;
+            padding: 2rem;
+            margin: 2rem 0;
+            border: 1px solid var(--border-subtle);
+        }
+
+        .methodology-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .methodology-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .methodology-card {
+            background: var(--surface-lighter);
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            padding: 1.5rem;
+            border-left: 4px solid var(--accent-orange);
+        }
+
+        .methodology-card h4 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--accent-orange);
+        }
+
+        .methodology-breakdown {
+            margin-bottom: 1rem;
+        }
+
+        .methodology-breakdown h5 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        .breakdown-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.3rem 0;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .breakdown-item:last-child {
+            border-bottom: none;
+        }
+
+        .breakdown-points {
+            font-weight: 600;
+            color: var(--accent-yellow);
+        }
+
+        .methodology-note {
+            background: rgba(255, 107, 53, 0.1);
+            border: 1px solid rgba(255, 107, 53, 0.3);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .suggestions-section {
+            margin-top: 2rem;
+        }
+
+        .suggestions-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .suggestion-item {
+            background: var(--surface-lighter);
+            border: 1px solid var(--border-subtle);
+            border-left: 4px solid var(--accent-orange);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            animation: slideIn 0.5s ease-out forwards;
+            opacity: 0;
+            transform: translateX(20px);
+        }
+
+        @keyframes slideIn {
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .file-status {
+            display: none;
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+            font-weight: 600;
+        }
+
+        /* Footer */
+        .copyright-footer {
+            text-align: center;
+            padding: 2rem;
+            margin-top: 4rem;
+            border-top: 1px solid var(--border-subtle);
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .copyright-circle {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            background: var(--accent-gradient);
+            border-radius: 50%;
+            text-align: center;
+            line-height: 16px;
+            font-size: 10px;
+            color: white;
+            margin-right: 0.5rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .header-nav {
+                padding: 1rem;
+                flex-wrap: wrap;
+                gap: 1rem;
+            }
+            
+            .nav-links {
+                gap: 1rem;
+                flex-wrap: wrap;
+            }
+            
+            .main-container {
+                padding: 2rem 1rem;
+            }
+            
+            .hero-title {
+                font-size: 2.5rem;
+            }
+
+            .creator-section {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .creator-avatar {
+                width: 200px;
+                height: 200px;
+            }
+
+            .creator-info {
+                text-align: center;
+            }
+
+            .creator-name {
+                font-size: 24px;
+            }
+            
+            .input-section {
+                padding: 1.5rem;
+            }
+            
+            .scores-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1rem;
+            }
+            
+            .methodology-grid, .docs-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            
+            .input-tabs {
+                flex-direction: column;
+            }
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header Navigation - Firebase Style -->
+    <nav class="header-nav">
+        <div class="logo-section">
+            <div class="logo-icon">🧠</div>
+            <span class="brand-name">Resume Intelligence</span>
+        </div>
+        <div class="nav-links">
+            <a href="#docs" class="nav-link">Docs</a>
+            <a href="https://www.linkedin.com/in/ambuj-tripathi-042b4a118/" target="_blank" class="nav-link">LinkedIn</a>
+            <a href="https://github.com/Ambuj123-lab" target="_blank" class="nav-link">GitHub</a>
+            <button id="themeToggle" class="theme-toggle">
+                <span id="themeIcon">🌙</span>
+            </button>
+            <a href="#analyzer" class="get-started-btn">Get Started</a>
+        </div>
+    </nav>
+
+    <div class="main-container">
+        <!-- Hero Section -->
+        <section class="hero-section">
+            <!-- Creator Section -->
+            <div class="creator-section">
+                <img src="https://i.postimg.cc/s2b4W9PP/Flux-Dev-A-sleek-futuristic-personal-branding-card-with-dark-b-0.jpg" alt="Ambuj Kumar Tripathi" class="creator-avatar">
+                
+                <div class="creator-info">
+                    <div class="creator-label">Built by</div>
+                    <div class="creator-name">Ambuj Kumar Tripathi</div>
+                    <div class="creator-title">
+                        <span id="typewriter"></span>
+                        <span class="typewriter-cursor">&nbsp;</span>
+                    </div>
+                </div>
+            </div>
+            
+            <h1 class="hero-title">
+                The full <span class="hero-highlight">AI</span> resume
+                <br>analyzer
+            </h1>
+            <p class="hero-subtitle">
+                Resume Intelligence accelerates your hiring process with AI-powered analysis. 
+                Analyze resumes, match job descriptions, and get actionable insights, all in one place.
+            </p>
+            <a href="#analyzer" class="try-button">Try Resume Intelligence</a>
+        </section>
+
+        <!-- Resume Upload Section -->
+        <section class="input-section" id="analyzer">
+            <h2 class="section-title">📄 Upload Resume</h2>
+            
+            <div class="upload-area" id="uploadArea">
+                <div class="upload-icon">📋</div>
+                <div class="upload-text">Drag your PDF resume here</div>
+                <div class="upload-subtext">or</div>
+                <button class="browse-btn" onclick="document.getElementById('resumeInput').click()">
+                    Browse Files
+                </button>
+                <input type="file" id="resumeInput" accept=".pdf" style="display: none;">
+            </div>
+            
+            <div id="fileStatus" class="file-status">
+                <i class="fas fa-check-circle"></i>
+                <span id="fileInfo">Resume uploaded successfully!</span>
+            </div>
+        </section>
+
+        <!-- Job Description Section -->
+        <section class="input-section">
+            <h2 class="section-title">💼 Job Description</h2>
+            
+            <div class="input-tabs">
+                <button class="input-tab active" id="pasteTab">
+                    <i class="fas fa-edit"></i>
+                    Paste JD
+                </button>
+                <button class="input-tab" id="uploadTab">
+                    <i class="fas fa-upload"></i>
+                    Upload JD
+                </button>
+            </div>
+
+            <!-- Paste Mode -->
+            <div id="pasteMode">
+                <textarea 
+                    id="jobDescription" 
+                    class="smart-textarea" 
+                    placeholder="Paste the job description here...
+
+Example:
+We are seeking a talented Software Engineer with 3+ years of experience in Python, JavaScript, and React. The ideal candidate should have strong knowledge of REST APIs, database design, and cloud platforms like AWS.
+
+Key Requirements:
+• Bachelor's degree in Computer Science
+• Proficiency in Python, JavaScript, React
+• Experience with databases (SQL/NoSQL)
+• Knowledge of cloud platforms (AWS, Azure)
+• Strong problem-solving skills"
+                ></textarea>
+            </div>
+
+            <!-- Upload Mode -->
+            <div id="uploadMode" class="hidden">
+                <div class="upload-area" id="jdUploadArea">
+                    <div class="upload-icon">📄</div>
+                    <div class="upload-text">Drag JD file here (PDF/DOC/TXT)</div>
+                    <div class="upload-subtext">or</div>
+                    <button class="browse-btn" onclick="document.getElementById('jdInput').click()">
+                        Browse Files
+                    </button>
+                    <input type="file" id="jdInput" accept=".pdf,.doc,.docx,.txt" style="display: none;">
+                </div>
+                
+                <div id="jdFileStatus" class="file-status">
+                    <i class="fas fa-check-circle"></i>
+                    <span id="jdFileInfo">JD file processed successfully!</span>
+                </div>
+            </div>
+
+            <button id="analyzeBtn" class="analyze-btn" disabled>
+                <i class="fas fa-rocket"></i>
+                Analyze Resume
+            </button>
+        </section>
+
+        <!-- Loading Section -->
+        <section id="loadingSection" class="loading-section">
+            <div class="loading-spinner"></div>
+            <div class="loading-text">Analyzing Your Resume</div>
+            <p>AI is processing your document with advanced algorithms...</p>
+        </section>
+
+        <!-- Results Section -->
+        <section id="resultsSection" class="results-section">
+            <h2 class="results-title">Analysis Results</h2>
+            
+            <div class="scores-grid">
+                <div class="score-card">
+                    <div id="resumeScore" class="score-value">0</div>
+                    <div class="score-label">Resume Score</div>
+                </div>
+                <div class="score-card">
+                    <div id="matchScore" class="score-value">0%</div>
+                    <div class="score-label">JD Match</div>
+                </div>
+                <div class="score-card">
+                    <div id="atsScore" class="score-value">0</div>
+                    <div class="score-label">ATS Friendly</div>
+                </div>
+                <div class="score-card">
+                    <div id="potentialScore" class="score-value">0</div>
+                    <div class="score-label">Potential</div>
+                </div>
+            </div>
+
+            <div class="suggestions-section">
+                <h3 class="suggestions-title">
+                    <i class="fas fa-lightbulb"></i>
+                    AI Recommendations
+                </h3>
+                <div id="suggestionsList">
+                    <!-- Suggestions will be populated by JavaScript -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Documentation Section -->
+        <section class="docs-section" id="docs">
+            <h2 class="docs-title">
+                <i class="fas fa-rocket"></i>
+                My AI-Powered Development Journey
+            </h2>
+            
+            <div class="docs-grid">
+                <div class="docs-card">
+                    <div class="docs-card-header" onclick="toggleDocsCard(this)">
+                        <span>⚡️ AI-Powered Development Workflow: Revolutionizing Project Delivery</span>
+                        <span class="docs-expand-icon">▼</span>
+                    </div>
+                    <div class="docs-card-content">
+                        <p><strong>From Weeks to Days: My Agile AI-Driven Approach</strong></p>
+                        <p>Here's a breakdown of my unique workflow that leverages cutting-edge AI to streamline development and accelerate project completion, delivering high-quality solutions in a fraction of the time.</p>
+                        
+                        <h5><strong>Phase 1: Idea & Requirement Analysis</strong></h5>
+                        <p><strong>Goal:</strong> Deeply understand the core problem and user needs.</p>
+                        <p><strong>Approach:</strong> I begin by thoroughly analyzing project requirements, identifying key functionalities, and defining the desired user experience. This involves extensive research and understanding the project's real-world impact.</p>
+                        
+                        <h5><strong>Phase 2: Strategic Prompt Engineering</strong></h5>
+                        <p><strong>Goal:</strong> Translate complex requirements into precise AI directives.</p>
+                        <p><strong>Approach:</strong> This is where my expertise in Prompt Engineering comes into play. I craft highly specific and contextual prompts to guide AI models (like Gemini and Meta Llama 3.70B) in generating robust code snippets, functionalities, and even full architectures. I utilize techniques such as Zero-Shot and Few-Shot Prompting to achieve optimal results.</p>
+                        
+                        <h5><strong>Phase 3: AI-Assisted Code Generation & Refinement</strong></h5>
+                        <p><strong>Goal:</strong> Rapidly generate and iterate on code.</p>
+                        <p><strong>Approach:</strong> The AI acts as my co-developer, generating initial codebases. My role then shifts to critical evaluation, refinement, and integration. I meticulously review the generated code, ensure best practices are followed, and integrate custom logic to meet unique project demands. This significantly reduces manual coding time.</p>
+                        
+                        <h5><strong>Phase 4: Testing, Debugging & Deployment</strong></h5>
+                        <p><strong>Goal:</strong> Ensure flawless functionality and seamless deployment.</p>
+                        <p><strong>Approach:</strong> I rigorously test all components, debug any issues, and optimize performance. Once validated, I deploy the solutions using platforms like Render, ensuring they are live, secure, and scalable.</p>
+                    </div>
+                </div>
+
+                <div class="docs-card">
+                    <div class="docs-card-header" onclick="toggleDocsCard(this)">
+                        <span>🚀 Project 1: LLM-Integrated Chatbot</span>
+                        <span class="docs-expand-icon">▼</span>
+                    </div>
+                    <div class="docs-card-content">
+                        <p><strong>Problem Solved:</strong> Streamlined customer support and quick query resolution.</p>
+                        <p><strong>My Role:</strong> Architected the chatbot's conversational flow and integrated advanced LLM capabilities.</p>
+                        
+                        <p><strong>Technologies Used:</strong></p>
+                        <ul>
+                            <li>LLM: Meta Llama 3.70B (Open-Source)</li>
+                            <li>Backend: Node.js</li>
+                            <li>Frontend: HTML, CSS, JavaScript</li>
+                        </ul>
+                        
+                        <p><strong>Key Achievement:</strong> Reduced query resolution time by 25%, significantly improving user experience.</p>
+                        
+                        <p><strong>Challenges & Solutions:</strong></p>
+                        <p><strong>Challenge:</strong> Managing conversational context efficiently.</p>
+                        <p><strong>Solution:</strong> Implemented client-side state management using JavaScript arrays to handle chat history, avoiding server-side session storage for better scalability.</p>
+                    </div>
+                </div>
+
+                <div class="docs-card">
+                    <div class="docs-card-header" onclick="toggleDocsCard(this)">
+                        <span>🗣️ Project 2: IBM Watson AI Chatbot (Advanced Conversational Agent)</span>
+                        <span class="docs-expand-icon">▼</span>
+                    </div>
+                    <div class="docs-card-content">
+                        <p><strong>Problem Solved:</strong> Developed a sophisticated conversational AI agent for complex user interactions.</p>
+                        <p><strong>My Role:</strong> Designed and implemented the full conversational logic, intent recognition, and response generation.</p>
+                        
+                        <p><strong>Technologies Used:</strong></p>
+                        <ul>
+                            <li>Platform: IBM Watson Assistant / IBM Cloud</li>
+                        </ul>
+                        
+                        <p><strong>Key Features:</strong></p>
+                        <ul>
+                            <li><strong>Intents & Entities:</strong> Defined and trained detailed intents (user goals) and extracted entities (key information).</li>
+                            <li><strong>Dialog Flows:</strong> Created intricate dialog flows for multi-turn conversations.</li>
+                            <li><strong>Fallback Mechanisms:</strong> Implemented robust fallback responses for unrecognized queries.</li>
+                            <li><strong>Synonyms & Context Management:</strong> Utilized synonyms for improved intent recognition and managed conversation context effectively.</li>
+                        </ul>
+                        
+                        <p><strong>Key Achievement:</strong> Enhanced user engagement and accuracy of responses, leading to a smoother user experience.</p>
+                        
+                        <p><strong>Challenges & Solutions:</strong></p>
+                        <p><strong>Challenge:</strong> Handling ambiguous user inputs and maintaining context across sessions.</p>
+                        <p><strong>Solution:</strong> Iteratively refined intent training data, developed complex conditional dialog steps, and integrated external data sources to enrich responses.</p>
+                    </div>
+                </div>
+
+                <div class="docs-card">
+                    <div class="docs-card-header" onclick="toggleDocsCard(this)">
+                        <span>📰 Project 3: Real-time News Aggregator (n8n Workflow Automation)</span>
+                        <span class="docs-expand-icon">▼</span>
+                    </div>
+                    <div class="docs-card-content">
+                        <p><strong>Problem Solved:</strong> Delivered personalized news updates directly to users' inboxes without manual effort.</p>
+                        <p><strong>My Role:</strong> Designed and implemented a robust automation workflow.</p>
+                        
+                        <p><strong>Technologies Used:</strong></p>
+                        <ul>
+                            <li>Automation Platform: n8n</li>
+                            <li>APIs: Google Gmail API (for sending emails)</li>
+                            <li>Data Sources: Multiple RSS Feeds (The Hindu, NDTV, Times of India, etc.)</li>
+                        </ul>
+                        
+                        <p><strong>Key Achievement:</strong> Created a fully automated news delivery system, ensuring timely and relevant information dissemination.</p>
+                        
+                        <p><strong>Challenges & Solutions:</strong></p>
+                        <p><strong>Challenge:</strong> Integrating multiple RSS feeds efficiently within a single workflow.</p>
+                        <p><strong>Solution:</strong> Utilized separate RSS Read nodes within n8n for each feed, followed by a Merge node to consolidate data before sending through Gmail.</p>
+                    </div>
+                </div>
+
+                <div class="docs-card">
+                    <div class="docs-card-header" onclick="toggleDocsCard(this)">
+                        <span>💡 My Core Skills: Leveraging AI for Impact</span>
+                        <span class="docs-expand-icon">▼</span>
+                    </div>
+                    <div class="docs-card-content">
+                        <p>My expertise lies at the intersection of AI innovation and practical application, enabling me to design and develop solutions that drive efficiency and engagement.</p>
+                        
+                        <p><strong>Prompt Engineering Expert:</strong></p>
+                        <ul>
+                            <li>Skilled in crafting effective prompts for various LLMs (Meta Llama 3.70B, Gemini, IBM WatsonX) to achieve precise outputs for code generation, text analysis, and content creation.</li>
+                            <li>Proficient in Zero-Shot and Few-Shot Prompting techniques.</li>
+                        </ul>
+                        
+                        <p><strong>AI Model Integration:</strong></p>
+                        <ul>
+                            <li>Experienced in integrating leading AI models and APIs (e.g., Gemini API, IBM WatsonX, Hugging Face models) into custom applications.</li>
+                            <li>Ability to fine-tune and adapt models for specific project requirements.</li>
+                        </ul>
+                        
+                        <p><strong>LLM Training & Data Labeling (Video Annotation):</strong></p>
+                        <ul>
+                            <li>Proficient in video annotation for robot activities, performing detailed data labeling with timestamps.</li>
+                            <li>Experienced in identifying and categorizing major to minute tasks, sub-tasks, and intents from a first-person/second-person perspective for LLM training.</li>
+                        </ul>
+                        
+                        <p><strong>Full-Stack Web Development (AI-Assisted):</strong></p>
+                        <ul>
+                            <li>Leverage AI tools to rapidly develop robust web applications (HTML, CSS, JavaScript, Node.js) with scalable backend logic and intuitive frontend user interfaces.</li>
+                        </ul>
+                        
+                        <p><strong>Workflow Automation (n8n):</strong></p>
+                        <ul>
+                            <li>Expert in designing and implementing complex automation workflows using n8n to connect various APIs and services, streamlining operations and data flow.</li>
+                        </ul>
+                        
+                        <p><strong>Cloud Platform Proficiency (GCP):</strong></p>
+                        <ul>
+                            <li>Hands-on experience with Google Cloud Platform services (e.g., setting up Service Accounts, managing APIs) to deploy and scale AI-driven solutions securely.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Scoring Methodology Section -->
+        <section class="methodology-section">
+            <h3 class="methodology-title">
+                <i class="fas fa-chart-line"></i>
+                How We Calculate Your Scores
+            </h3>
+            
+            <div class="methodology-grid">
+                <!-- Resume Score Breakdown -->
+                <div class="methodology-card">
+                    <h4>📊 Resume Score (100 Points)</h4>
+                    
+                    <div class="methodology-breakdown">
+                        <h5>Contact Information - 20 Points</h5>
+                        <div class="breakdown-item">
+                            <span>Professional Email</span>
+                            <span class="breakdown-points">5 pts</span>
+                        </div>
+                        <div class="breakdown-item">
+                            <span>Phone Number</span>
+                            <span class="breakdown-points">5 pts</span>
+                        </div>
+                        <div class="breakdown-item">
+                            <span>LinkedIn Profile</span>
+                            <span class="breakdown-points">5 pts</span>
+                        </div>
+                        <div class="breakdown-item">
+                            <span>GitHub/Portfolio</span>
+                            <span class="breakdown-points">5 pts</span>
+                        </div>
+                    </div>
+
+                    <div class="methodology-breakdown">
+                        <h5>Experience Section - 25 Points</h5>
+                        <div class="breakdown-item">
+                            <span>Work Experience Present</span>
+                            <span class="breakdown-points">10 pts</span>
+                        </div>
+                        <div class="breakdown-item">
+                            <span>Quantified Achievements</span>
+                            <span class="breakdown-points">15 pts</span>
+                        </div>
+                    </div>
+
+                    <div class="methodology-breakdown">
+                        <h5>Skills & Others</h5>
+                        <div class="breakdown-item">
+                            <span>Technical Skills (25 pts)</span>
+                            <span class="breakdown-points">Variable</span>
+                        </div>
+                        <div class="breakdown-item">
+                            <span>Education (15 pts)</span>
+                            <span class="breakdown-points">Variable</span>
+                        </div>
+                        <div class="breakdown-item">
+                            <span>Projects (15 pts)</span>
+                            <span class="breakdown-points">Variable</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ATS Score Breakdown -->
+                <div class="methodology-card">
+                    <h4>🤖 ATS Score (100 Points)</h4>
+                    
+                    <div class="methodology-breakdown">
+                        <h5>Standard Sections Detection</h5>
+                        <div class="breakdown-item">
+                            <span>Experience Section Found</span>
+                            <span class="breakdown-points">25 pts</span>
+                        </div>
+                        <div class="breakdown-item">
+                            <span>Skills Section Present</span>
+                            <span class="breakdown-points">20 pts</span>
+                        </div>
+                        <div class="breakdown-item">
+                            <span>Education Section</span>
+                            <span class="breakdown-points">15 pts</span>
+                        </div>
+                        <div class="breakdown-item">
+                            <span>Contact Information Parsing</span>
+                            <span class="breakdown-points">15 pts</span>
+                        </div>
+                        <div class="breakdown-item">
+                            <span>Sufficient Content (200+ words)</span>
+                            <span class="breakdown-points">15 pts</span>
+                        </div>
+                        <div class="breakdown-item">
+                            <span>Proper Formatting (bullets/lists)</span>
+                            <span class="breakdown-points">10 pts</span>
+                        </div>
+                    </div>
+
+                    <div class="methodology-note">
+                        <strong>Note:</strong> Based on real ATS systems like Workday and Greenhouse requirements for keyword density analysis and file format compatibility.
+                    </div>
+                </div>
+
+                <!-- JD Match & Potential -->
+                <div class="methodology-card">
+                    <h4>🎯 JD Match & Potential Scores</h4>
+                    
+                    <div class="methodology-breakdown">
+                        <h5>Job Description Match Percentage</h5>
+                        <div class="breakdown-item">
+                            <span>Keyword Extraction Method</span>
+                            <span class="breakdown-points">Simple</span>
+                        </div>
+                        <div class="breakdown-item">
+                            <span>Word Length Filter</span>
+                            <span class="breakdown-points">4+ chars</span>
+                        </div>
+                        <div class="breakdown-item">
+                            <span>Stop Words Removal</span>
+                            <span class="breakdown-points">Yes</span>
+                        </div>
+                        <div class="breakdown-item">
+                            <span>Overlap Calculation</span>
+                            <span class="breakdown-points">%</span>
+                        </div>
+                    </div>
+
+                    <div class="methodology-breakdown">
+                        <h5>Potential Score Formula</h5>
+                        <div class="breakdown-item">
+                            <span>Current Score + Improvement Buffer</span>
+                            <span class="breakdown-points">+20 pts</span>
+                        </div>
+                        <div class="breakdown-item">
+                            <span>Maximum Possible Score</span>
+                            <span class="breakdown-points">100 pts</span>
+                        </div>
+                    </div>
+
+                    <div class="methodology-note">
+                        <strong>Limitation:</strong> JD matching uses simple keyword overlap without semantic understanding. Advanced versions would use NLP and contextual analysis.
+                    </div>
+                </div>
+            </div>
+
+            <div class="methodology-card" style="grid-column: 1 / -1;">
+                <h4>📈 Scoring Philosophy</h4>
+                <p style="color: var(--text-secondary); line-height: 1.6; margin-bottom: 1rem;">
+                    Our scoring system is designed to reflect modern hiring practices and ATS requirements. The weightings prioritize contact information and quantified achievements, which are critical for professional resumes in today's job market.
+                </p>
+                <p style="color: var(--text-secondary); line-height: 1.6;">
+                    <strong>Industry Standards:</strong> Contact Info (20%) + Experience (25%) + Skills (25%) + Education (15%) + Projects (15%) = 100% comprehensive evaluation based on recruiter expectations and ATS parsing capabilities.
+                </p>
+            </div>
+        </section>
+    </div>
+
+    <!-- Copyright Footer -->
+    <footer class="copyright-footer">
+        <div class="copyright-text">
+            <span class="copyright-circle">©</span>
+            2025 Ambuj Kumar Tripathi. All rights reserved.
+        </div>
+    </footer>
+
+    <script>
+        // Initialize PDF.js
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+        // Global variables
+        let resumeText = '';
+        let jobDescText = '';
+
+        // Theme Toggle
+        const themeToggle = document.getElementById('themeToggle');
+        const themeIcon = document.getElementById('themeIcon');
+        const body = document.body;
+
+        let currentTheme = 'dark';
+
+        body.setAttribute('data-theme', currentTheme);
+        themeIcon.textContent = currentTheme === 'dark' ? '☀️' : '🌙';
+
+        themeToggle.addEventListener('click', function() {
+            const newTheme = body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+            body.setAttribute('data-theme', newTheme);
+            themeIcon.textContent = newTheme === 'dark' ? '☀️' : '🌙';
+        });
+
+        // Typewriter Effect - FIXED VERSION
+        const phrases = [
+            "AI Solutions Architect",
+            "Chatbot Developer", 
+            "Conversational AI",
+            "Prompt Engineering Solutions"
+        ];
+
+        let currentPhraseIndex = 0;
+        let currentCharIndex = 0;
+        let isDeleting = false;
+        const typeSpeed = 100;
+        const deleteSpeed = 50;
+        const pauseTime = 2000;
+
+        function typeWriter() {
+            const typewriterElement = document.getElementById('typewriter');
+            if (!typewriterElement) return;
+            
+            const currentPhrase = phrases[currentPhraseIndex];
+            
+            if (!isDeleting && currentCharIndex < currentPhrase.length) {
+                // Typing
+                typewriterElement.textContent = currentPhrase.substring(0, currentCharIndex + 1);
+                currentCharIndex++;
+                setTimeout(typeWriter, typeSpeed);
+            } else if (isDeleting && currentCharIndex > 0) {
+                // Deleting
+                typewriterElement.textContent = currentPhrase.substring(0, currentCharIndex - 1);
+                currentCharIndex--;
+                setTimeout(typeWriter, deleteSpeed);
+            } else {
+                // Switch between typing and deleting
+                if (!isDeleting) {
+                    // Pause after typing complete phrase
+                    isDeleting = true;
+                    setTimeout(typeWriter, pauseTime);
+                } else {
+                    // Move to next phrase
+                    isDeleting = false;
+                    currentPhraseIndex = (currentPhraseIndex + 1) % phrases.length;
+                    setTimeout(typeWriter, typeSpeed);
+                }
+            }
+        }
+
+        // Start typewriter effect when page loads
+        window.addEventListener('load', function() {
+            setTimeout(() => {
+                typeWriter();
+            }, 1000);
+        });
+
+        // Tab Switching
+        const pasteTab = document.getElementById('pasteTab');
+        const uploadTab = document.getElementById('uploadTab');
+        const pasteMode = document.getElementById('pasteMode');
+        const uploadMode = document.getElementById('uploadMode');
+
+        pasteTab.addEventListener('click', function() {
+            pasteTab.classList.add('active');
+            uploadTab.classList.remove('active');
+            pasteMode.classList.remove('hidden');
+            uploadMode.classList.add('hidden');
+        });
+
+        uploadTab.addEventListener('click', function() {
+            uploadTab.classList.add('active');
+            pasteTab.classList.remove('active');
+            pasteMode.classList.add('hidden');
+            uploadMode.classList.remove('hidden');
+        });
+
+        // File Upload Functionality
+        const uploadArea = document.getElementById('uploadArea');
+        const resumeInput = document.getElementById('resumeInput');
+        const fileStatus = document.getElementById('fileStatus');
+        const fileInfo = document.getElementById('fileInfo');
+        const analyzeBtn = document.getElementById('analyzeBtn');
+        const jobDescription = document.getElementById('jobDescription');
+
+        // JD Upload
+        const jdUploadArea = document.getElementById('jdUploadArea');
+        const jdInput = document.getElementById('jdInput');
+        const jdFileStatus = document.getElementById('jdFileStatus');
+        const jdFileInfo = document.getElementById('jdFileInfo');
+
+        // Drag and Drop
+        function setupDragDrop(area, input, callback) {
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                area.addEventListener(eventName, preventDefaults, false);
+            });
+
+            ['dragenter', 'dragover'].forEach(eventName => {
+                area.addEventListener(eventName, () => area.classList.add('dragover'), false);
+            });
+
+            ['dragleave', 'drop'].forEach(eventName => {
+                area.addEventListener(eventName, () => area.classList.remove('dragover'), false);
+            });
+
+            area.addEventListener('drop', (e) => {
+                const files = e.dataTransfer.files;
+                if (files.length > 0) callback(files[0]);
+            });
+
+            input.addEventListener('change', (e) => {
+                if (e.target.files.length > 0) callback(e.target.files[0]);
+            });
+        }
+
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        // Setup drag and drop for both upload areas
+        setupDragDrop(uploadArea, resumeInput, processResumeFile);
+        setupDragDrop(jdUploadArea, jdInput, processJDFile);
+
+        // Process Resume File
+        async function processResumeFile(file) {
+            try {
+                fileInfo.textContent = `Processing ${file.name}...`;
+                fileStatus.style.display = 'block';
+
+                const arrayBuffer = await file.arrayBuffer();
+                const pdf = await pdfjsLib.getDocument(arrayBuffer).promise;
+                
+                let fullText = '';
+                for (let i = 1; i <= pdf.numPages; i++) {
+                    const page = await pdf.getPage(i);
+                    const textContent = await page.getTextContent();
+                    fullText += textContent.items.map(item => item.str).join(' ') + '\n';
+                }
+                
+                resumeText = fullText.trim();
+                
+                if (resumeText.length < 100) {
+                    resumeText = generateSampleResume();
+                    fileInfo.innerHTML = `<i class="fas fa-check"></i> ${file.name} processed (sample data used)`;
+                } else {
+                    fileInfo.innerHTML = `<i class="fas fa-check"></i> ${file.name} analyzed successfully!`;
+                }
+                
+                checkAnalyzeButton();
+                
+            } catch (error) {
+                console.error('Resume processing error:', error);
+                resumeText = generateSampleResume();
+                fileInfo.innerHTML = `<i class="fas fa-exclamation-triangle"></i> Using sample data for compatibility`;
+                checkAnalyzeButton();
+            }
+        }
+
+        // Process JD File
+        async function processJDFile(file) {
+            try {
+                jdFileInfo.textContent = `Processing ${file.name}...`;
+                jdFileStatus.style.display = 'block';
+                
+                let text = '';
+                
+                if (file.type.includes('pdf')) {
+                    const arrayBuffer = await file.arrayBuffer();
+                    const pdf = await pdfjsLib.getDocument(arrayBuffer).promise;
+                    
+                    for (let i = 1; i <= pdf.numPages; i++) {
+                        const page = await pdf.getPage(i);
+                        const textContent = await page.getTextContent();
+                        text += textContent.items.map(item => item.str).join(' ') + '\n';
+                    }
+                } else {
+                    text = await file.text();
+                }
+                
+                if (text.trim().length > 20) {
+                    jobDescText = text.trim();
+                    jdFileInfo.innerHTML = `<i class="fas fa-check"></i> ${file.name} processed successfully!`;
+                    checkAnalyzeButton();
+                } else {
+                    throw new Error('Could not extract text');
+                }
+                
+            } catch (error) {
+                console.error('JD processing error:', error);
+                jdFileInfo.innerHTML = `<i class="fas fa-exclamation-triangle"></i> Error processing file`;
+            }
+        }
+
+        // Monitor job description textarea
+        jobDescription.addEventListener('input', (e) => {
+            jobDescText = e.target.value.trim();
+            checkAnalyzeButton();
+        });
+
+        function checkAnalyzeButton() {
+            const isReady = resumeText.length > 0 && jobDescText.length > 0;
+            analyzeBtn.disabled = !isReady;
+            
+            if (isReady) {
+                analyzeBtn.innerHTML = '<i class="fas fa-rocket"></i> Analyze Resume';
+            } else {
+                analyzeBtn.innerHTML = '<i class="fas fa-upload"></i> Upload Resume & Add Job Description';
+            }
+        }
+
+        // Analysis
+        analyzeBtn.addEventListener('click', async () => {
+            if (resumeText && jobDescText) {
+                await performAnalysis();
+            }
+        });
+
+        async function performAnalysis() {
+            document.getElementById('loadingSection').style.display = 'block';
+            document.getElementById('resultsSection').style.display = 'none';
+            
+            await new Promise(resolve => setTimeout(resolve, 3000));
+            
+            const results = analyzeResume(resumeText, jobDescText);
+            displayResults(results);
+            
+            document.getElementById('loadingSection').style.display = 'none';
+            document.getElementById('resultsSection').style.display = 'block';
+            document.getElementById('resultsSection').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function analyzeResume(resume, jobDesc) {
+            const resumeLower = resume.toLowerCase();
+            const jobLower = jobDesc.toLowerCase();
+            
+            let resumeScore = 0;
+            let suggestions = [];
+            
+            // Contact Information (20 points)
+            const emailFound = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/.test(resume);
+            const phoneFound = /[\+]?[\d\s\-\(\)]{10,}/.test(resume);
+            const linkedinFound = resumeLower.includes('linkedin');
+            const githubFound = resumeLower.includes('github') || resumeLower.includes('portfolio');
+            
+            if (emailFound) resumeScore += 5;
+            else suggestions.push("Add a professional email address");
+            
+            if (phoneFound) resumeScore += 5;
+            else suggestions.push("Include your phone number");
+            
+            if (linkedinFound) resumeScore += 5;
+            else suggestions.push("Add your LinkedIn profile URL");
+            
+            if (githubFound) resumeScore += 5;
+            else suggestions.push("Include links to your GitHub or portfolio");
+            
+            // Experience Analysis (25 points)
+            if (resumeLower.includes('experience') || resumeLower.includes('work')) {
+                resumeScore += 10;
+            } else {
+                suggestions.push("Add a professional experience section");
+            }
+            
+            // Quantified achievements
+            const achievements = resume.match(/\d+%|\$[\d,]+|\d+x|increased.*\d+|improved.*\d+|reduced.*\d+/gi);
+            if (achievements && achievements.length >= 2) {
+                resumeScore += 15;
+            } else if (achievements && achievements.length >= 1) {
+                resumeScore += 8;
+                suggestions.push("Add more quantified achievements");
+            } else {
+                suggestions.push("Include quantified achievements (e.g., 'Increased efficiency by 25%')");
+            }
+            
+            // Skills Analysis (25 points)
+            const techSkills = ['javascript', 'python', 'java', 'react', 'node', 'sql', 'html', 'css', 'aws', 'docker', 'git'];
+            const foundSkills = techSkills.filter(skill => resumeLower.includes(skill));
+            resumeScore += Math.min(20, foundSkills.length * 2);
+            
+            if (foundSkills.length < 5) {
+                suggestions.push("Include more relevant technical skills");
+            }
+            
+            if (resumeLower.includes('skills') || resumeLower.includes('technologies')) {
+                resumeScore += 5;
+            } else {
+                suggestions.push("Add a dedicated skills section");
+            }
+            
+            // Education (15 points)
+            if (resumeLower.includes('education') || resumeLower.includes('degree')) {
+                resumeScore += 10;
+            } else {
+                suggestions.push("Include your educational background");
+            }
+            
+            if (resumeLower.includes('bachelor') || resumeLower.includes('master') || resumeLower.includes('university')) {
+                resumeScore += 5;
+            }
+            
+            // Projects (15 points)
+            const projectCount = (resumeLower.match(/project/g) || []).length;
+            if (projectCount >= 2) {
+                resumeScore += 15;
+            } else if (projectCount >= 1) {
+                resumeScore += 8;
+                suggestions.push("Add more project details");
+            } else {
+                suggestions.push("Include relevant projects to showcase your skills");
+            }
+            
+            // Job Match Calculation
+            const jobWords = jobLower.split(/\W+/).filter(word => 
+                word.length > 3 && 
+                !['the', 'and', 'for', 'are', 'but', 'not', 'you', 'all', 'can', 'will', 'this', 'that', 'with', 'from', 'they', 'know', 'want', 'been', 'good', 'much', 'some', 'time', 'very', 'when', 'come', 'could', 'like', 'into', 'over', 'also', 'back', 'after', 'first', 'well', 'work', 'such', 'make', 'them', 'write', 'would'].includes(word)
+            );
+            
+            const resumeWords = resumeLower.split(/\W+/);
+            const matchedWords = jobWords.filter(word => resumeWords.includes(word));
+            const matchPercentage = Math.round((matchedWords.length / jobWords.length) * 100);
+            
+            // ATS Score
+            let atsScore = 0;
+            if (resumeLower.includes('experience')) atsScore += 25;
+            if (resumeLower.includes('skills')) atsScore += 20;
+            if (resumeLower.includes('education')) atsScore += 15;
+            if (emailFound) atsScore += 15;
+            if (resume.split(/\s+/).length > 200) atsScore += 15;
+            if (resume.includes('•') || resume.includes('-')) atsScore += 10;
+            
+            // Improvement potential
+            const potentialScore = Math.min(100, resumeScore + 20);
+            
+            return {
+                resumeScore: Math.min(100, resumeScore),
+                matchPercentage: Math.min(100, matchPercentage),
+                atsScore: Math.min(100, atsScore),
+                potentialScore: potentialScore,
+                suggestions: suggestions.slice(0, 6)
+            };
+        }
+
+        function displayResults(results) {
+            // Animate counters
+            setTimeout(() => animateCounter('resumeScore', results.resumeScore), 200);
+            setTimeout(() => animateCounter('matchScore', results.matchPercentage, '%'), 400);
+            setTimeout(() => animateCounter('atsScore', results.atsScore), 600);
+            setTimeout(() => animateCounter('potentialScore', results.potentialScore), 800);
+            
+            // Display suggestions
+            const suggestionsList = document.getElementById('suggestionsList');
+            suggestionsList.innerHTML = '';
+            
+            if (results.suggestions.length === 0) {
+                suggestionsList.innerHTML = '<div class="suggestion-item">🎉 Excellent! Your resume is well-optimized for this position.</div>';
+            } else {
+                results.suggestions.forEach((suggestion, index) => {
+                    setTimeout(() => {
+                        const div = document.createElement('div');
+                        div.className = 'suggestion-item';
+                        div.innerHTML = `💡 ${suggestion}`;
+                        suggestionsList.appendChild(div);
+                    }, index * 200);
+                });
+            }
+        }
+
+        function animateCounter(elementId, target, suffix = '') {
+            const element = document.getElementById(elementId);
+            let current = 0;
+            const increment = target / 50;
+            
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= target) {
+                    current = target;
+                    clearInterval(timer);
+                }
+                element.textContent = Math.round(current) + suffix;
+            }, 40);
+        }
+
+        function generateSampleResume() {
+            return `John Doe
+Email: john.doe@email.com | Phone: +1234567890
+LinkedIn: linkedin.com/in/johndoe | GitHub: github.com/johndoe
+
+PROFESSIONAL EXPERIENCE
+Software Developer - Tech Company (2020-2023)
+• Developed web applications using JavaScript, React, and Node.js
+• Collaborated with teams using Agile methodologies
+• Implemented REST APIs and improved performance by 25%
+• Built 5+ full-stack applications serving 1000+ users
+
+TECHNICAL SKILLS
+Programming: JavaScript, Python, Java, SQL
+Frameworks: React, Node.js, Express, Django
+Databases: MySQL, MongoDB, PostgreSQL
+Tools: Git, Docker, AWS, Jenkins
+
+EDUCATION
+Bachelor of Science in Computer Science
+University of Technology (2016-2020)
+GPA: 3.7/4.0
+
+PROJECTS
+E-commerce Web Application
+• Built full-stack application with React and Node.js
+• Integrated payment processing and authentication
+• Deployed on AWS with CI/CD pipeline`;
+        }
+
+        // Documentation Section Toggle
+        function toggleDocsCard(header) {
+            const content = header.nextElementSibling;
+            const icon = header.querySelector('.docs-expand-icon');
+            const isExpanded = content.classList.contains('expanded');
+            
+            if (isExpanded) {
+                content.classList.remove('expanded');
+                icon.textContent = '▼';
+            } else {
+                content.classList.add('expanded');
+                icon.textContent = '▲';
+            }
+        }
+
+        // Smooth scrolling for navigation links
+        document.addEventListener('DOMContentLoaded', function() {
+            const navLinks = document.querySelectorAll('a[href^="#"]');
+            navLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href');
+                    const targetSection = document.querySelector(targetId);
+                    if (targetSection) {
+                        targetSection.scrollIntoView({ 
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                });
+            });
+        });
+
+        // Initialize
+        checkAnalyzeButton();
+    </script>
+</body>
+</html>
