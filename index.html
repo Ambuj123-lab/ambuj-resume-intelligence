@@ -6,7 +6,8 @@
     <title>Resume Intelligence by Ambuj Kumar Tripathi</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <link rel="manifest" href="manifest.json">
     <link rel="icon" href="icons/maskable_icon_x48.png" type="image/png">
 
@@ -830,64 +831,62 @@
         .hidden {
             display: none;
         }
-        /* 🎬 Special Styling ONLY for PWA Install Button */
-#pwa-install-button {
-    background: linear-gradient(135deg, #e50914, #b81d24); /* Netflix red gradient */
-    color: #fff;
-    font-size: 0.95rem;
-    font-weight: 700;
-    padding: 0.85rem 1.6rem;
-    border-radius: 12px;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    position: relative;
-    overflow: hidden;
-    cursor: pointer;
-    transition: transform 0.25s ease, box-shadow 0.25s ease;
-}
+        
+        #pwa-install-button {
+            background: linear-gradient(135deg, #e50914, #b81d24); 
+            color: #fff;
+            font-size: 0.95rem;
+            font-weight: 700;
+            padding: 0.85rem 1.6rem;
+            border-radius: 12px;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+        }
 
-#pwa-install-button:hover {
-    transform: translateY(-3px) scale(1.05);
-    box-shadow: 0 6px 20px rgba(229, 9, 20, 0.6);
-}
+        #pwa-install-button:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 6px 20px rgba(229, 9, 20, 0.6);
+        }
 
-/* ✨ Subtle shine effect */
-#pwa-install-button::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: -60%;
-    width: 50%;
-    height: 100%;
-    background: linear-gradient(
-        120deg,
-        transparent,
-        rgba(255, 255, 255, 0.4),
-        transparent
-    );
-    transform: skewX(-20deg);
-}
+        #pwa-install-button::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: -60%;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(
+                120deg,
+                transparent,
+                rgba(255, 255, 255, 0.4),
+                transparent
+            );
+            transform: skewX(-20deg);
+        }
 
-#pwa-install-button:hover::before {
-    animation: shine 1s forwards;
-}
+        #pwa-install-button:hover::before {
+            animation: shine 1s forwards;
+        }
 
-@keyframes shine {
-    0% { left: -60%; }
-    100% { left: 120%; }
-}
+        @keyframes shine {
+            0% { left: -60%; }
+            100% { left: 120%; }
+        }
 
-/* Icon effect */
-#pwa-install-button i {
-    transition: transform 0.3s ease;
-}
+        #pwa-install-button i {
+            transition: transform 0.3s ease;
+        }
 
-#pwa-install-button:hover i {
-    transform: scale(1.2);
-}
+        #pwa-install-button:hover i {
+            transform: scale(1.2);
+        }
 
     </style>
 </head>
@@ -958,6 +957,20 @@
                 <i class="fas fa-check-circle"></i>
                 <span id="fileInfo">Resume uploaded successfully!</span>
             </div>
+            <div style="border-top: 1px solid var(--border-subtle); margin-top: 2rem; padding-top: 2rem;">
+        <h3 style="text-align: center; margin-bottom: 1rem; color: var(--text-primary);">OR paste resume text directly</h3>
+        <textarea 
+            id="resumeTextArea" 
+            class="smart-textarea" 
+            placeholder="Paste your complete resume text here for most accurate analysis..."
+            rows="10"
+            style="width: 100%; margin-bottom: 1rem;">
+        </textarea>
+        <p style="font-size: 0.9rem; color: var(--text-secondary); text-align: center;">
+            💡 Tip: Text input provides more accurate analysis than PDF upload
+        </p>
+    </div>
+
         </section>
 
         <!-- Job Description Section -->
@@ -1055,6 +1068,12 @@ Key Requirements:
                 </h3>
                 <div id="suggestionsList">
                     <!-- Suggestions will be populated by JavaScript -->
+                </div>
+                <div style="text-align: center; margin-top: 2rem;">
+                    <button id="downloadReport" class="analyze-btn" style="max-width: 300px; display: none;">
+                        <i class="fas fa-download"></i>
+                        Download Analysis Report
+                    </button>
                 </div>
             </div>
         </section>
@@ -1379,11 +1398,12 @@ Key Requirements:
 
     <script>
         // Initialize PDF.js
-        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+       pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
 
         // Global variables
         let resumeText = '';
         let jobDescText = '';
+        let currentResults = null;
 
         // Theme Toggle
         const themeToggle = document.getElementById('themeToggle');
@@ -1401,7 +1421,7 @@ Key Requirements:
             themeIcon.textContent = newTheme === 'dark' ? '☀️' : '🌙';
         });
 
-        // Typewriter Effect - FIXED VERSION
+        // Typewriter Effect
         const phrases = [
             "AI Solutions Architect",
             "Chatbot Developer", 
@@ -1423,23 +1443,18 @@ Key Requirements:
             const currentPhrase = phrases[currentPhraseIndex];
             
             if (!isDeleting && currentCharIndex < currentPhrase.length) {
-                // Typing
                 typewriterElement.textContent = currentPhrase.substring(0, currentCharIndex + 1);
                 currentCharIndex++;
                 setTimeout(typeWriter, typeSpeed);
             } else if (isDeleting && currentCharIndex > 0) {
-                // Deleting
                 typewriterElement.textContent = currentPhrase.substring(0, currentCharIndex - 1);
                 currentCharIndex--;
                 setTimeout(typeWriter, deleteSpeed);
             } else {
-                // Switch between typing and deleting
                 if (!isDeleting) {
-                    // Pause after typing complete phrase
                     isDeleting = true;
                     setTimeout(typeWriter, pauseTime);
                 } else {
-                    // Move to next phrase
                     isDeleting = false;
                     currentPhraseIndex = (currentPhraseIndex + 1) % phrases.length;
                     setTimeout(typeWriter, typeSpeed);
@@ -1447,7 +1462,6 @@ Key Requirements:
             }
         }
 
-        // Start typewriter effect when page loads
         window.addEventListener('load', function() {
             setTimeout(() => {
                 typeWriter();
@@ -1474,21 +1488,23 @@ Key Requirements:
             uploadMode.classList.remove('hidden');
         });
 
-        // File Upload Functionality
+        // File Upload Setup
         const uploadArea = document.getElementById('uploadArea');
         const resumeInput = document.getElementById('resumeInput');
         const fileStatus = document.getElementById('fileStatus');
         const fileInfo = document.getElementById('fileInfo');
-        const analyzeBtn = document.getElementById('analyzeBtn');
-        const jobDescription = document.getElementById('jobDescription');
-
-        // JD Upload
+        
         const jdUploadArea = document.getElementById('jdUploadArea');
         const jdInput = document.getElementById('jdInput');
         const jdFileStatus = document.getElementById('jdFileStatus');
         const jdFileInfo = document.getElementById('jdFileInfo');
 
-        // Drag and Drop
+        // Text areas
+        const resumeTextArea = document.getElementById('resumeTextArea');
+        const jobDescTextArea = document.getElementById('jobDescription');
+        const analyzeBtn = document.getElementById('analyzeBtn');
+
+        // Drag and Drop Setup
         function setupDragDrop(area, input, callback) {
             ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
                 area.addEventListener(eventName, preventDefaults, false);
@@ -1517,12 +1533,12 @@ Key Requirements:
             e.stopPropagation();
         }
 
-        // Setup drag and drop for both upload areas
         setupDragDrop(uploadArea, resumeInput, processResumeFile);
         setupDragDrop(jdUploadArea, jdInput, processJDFile);
 
         // Process Resume File
         async function processResumeFile(file) {
+            console.log('File selected:', file.name, file.type);
             try {
                 fileInfo.textContent = `Processing ${file.name}...`;
                 fileStatus.style.display = 'block';
@@ -1539,9 +1555,9 @@ Key Requirements:
                 
                 resumeText = fullText.trim();
                 
-                if (resumeText.length < 100) {
-                    resumeText = generateSampleResume();
-                    fileInfo.innerHTML = `<i class="fas fa-check"></i> ${file.name} processed (sample data used)`;
+                if (resumeText.length < 50) {
+                    fileInfo.innerHTML = `<i class="fas fa-times"></i> Could not extract text from ${file.name}. Try a different PDF.`;
+                    resumeText = '';
                 } else {
                     fileInfo.innerHTML = `<i class="fas fa-check"></i> ${file.name} analyzed successfully!`;
                 }
@@ -1550,8 +1566,8 @@ Key Requirements:
                 
             } catch (error) {
                 console.error('Resume processing error:', error);
-                resumeText = generateSampleResume();
-                fileInfo.innerHTML = `<i class="fas fa-exclamation-triangle"></i> Using sample data for compatibility`;
+                resumeText = '';
+                fileInfo.innerHTML = `<i class="fas fa-times"></i> Error processing PDF. Please try again or use text input.`;
                 checkAnalyzeButton();
             }
         }
@@ -1591,37 +1607,54 @@ Key Requirements:
             }
         }
 
-        // Monitor job description textarea
-        jobDescription.addEventListener('input', (e) => {
-            jobDescText = e.target.value.trim();
-            checkAnalyzeButton();
-        });
-
+        // Check if analyze button should be enabled
         function checkAnalyzeButton() {
-            const isReady = resumeText.length > 0 && jobDescText.length > 0;
-            analyzeBtn.disabled = !isReady;
-            
-            if (isReady) {
-                analyzeBtn.innerHTML = '<i class="fas fa-rocket"></i> Analyze Resume';
-            } else {
-                analyzeBtn.innerHTML = '<i class="fas fa-upload"></i> Upload Resume & Add Job Description';
+            const resumeFromTextArea = resumeTextArea ? resumeTextArea.value.trim() : '';
+            const hasResume = (resumeText && resumeText.length > 0) || resumeFromTextArea.length > 0;
+
+            const jobDescFromTextArea = jobDescTextArea ? jobDescTextArea.value.trim() : '';
+            const hasJobDesc = (jobDescText && jobDescText.length > 0) || jobDescFromTextArea.length > 0;
+
+            const isReady = hasResume && hasJobDesc;
+
+            if (analyzeBtn) {
+                analyzeBtn.disabled = !isReady;
+
+                if (isReady) {
+                    analyzeBtn.innerHTML = '<i class="fas fa-rocket"></i> Analyze Resume';
+                    analyzeBtn.style.opacity = '1';
+                } else {
+                    analyzeBtn.innerHTML = '<i class="fas fa-upload"></i> Upload Resume & Add Job Description';
+                    analyzeBtn.style.opacity = '0.6';
+                }
             }
         }
 
-        // Analysis
-        analyzeBtn.addEventListener('click', async () => {
-            if (resumeText && jobDescText) {
-                await performAnalysis();
-            }
-        });
+        // Event listeners for text areas
+        if (resumeTextArea) {
+            resumeTextArea.addEventListener('input', checkAnalyzeButton);
+        }
+        
+        if (jobDescTextArea) {
+            jobDescTextArea.addEventListener('input', checkAnalyzeButton);
+        }
 
+        // Analysis function
         async function performAnalysis() {
+            const finalResumeText = resumeText || resumeTextArea.value.trim();
+            const finalJobDesc = jobDescText || jobDescTextArea.value.trim();
+            
+            if (!finalResumeText || !finalJobDesc) {
+                alert('Please provide both resume and job description');
+                return;
+            }
+            
             document.getElementById('loadingSection').style.display = 'block';
             document.getElementById('resultsSection').style.display = 'none';
             
             await new Promise(resolve => setTimeout(resolve, 3000));
             
-            const results = analyzeResume(resumeText, jobDescText);
+            const results = analyzeResume(finalResumeText, finalJobDesc);
             displayResults(results);
             
             document.getElementById('loadingSection').style.display = 'none';
@@ -1629,139 +1662,321 @@ Key Requirements:
             document.getElementById('resultsSection').scrollIntoView({ behavior: 'smooth' });
         }
 
-        function analyzeResume(resume, jobDesc) {
-            const resumeLower = resume.toLowerCase();
-            const jobLower = jobDesc.toLowerCase();
-            
-            let resumeScore = 0;
-            let suggestions = [];
-            
-            // Contact Information (20 points)
-            const emailFound = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/.test(resume);
-            const phoneFound = /[\+]?[\d\s\-\(\)]{10,}/.test(resume);
-            const linkedinFound = resumeLower.includes('linkedin');
-            const githubFound = resumeLower.includes('github') || resumeLower.includes('portfolio');
-            
-            if (emailFound) resumeScore += 5;
-            else suggestions.push("Add a professional email address");
-            
-            if (phoneFound) resumeScore += 5;
-            else suggestions.push("Include your phone number");
-            
-            if (linkedinFound) resumeScore += 5;
-            else suggestions.push("Add your LinkedIn profile URL");
-            
-            if (githubFound) resumeScore += 5;
-            else suggestions.push("Include links to your GitHub or portfolio");
-            
-            // Experience Analysis (25 points)
-            if (resumeLower.includes('experience') || resumeLower.includes('work')) {
-                resumeScore += 10;
-            } else {
-                suggestions.push("Add a professional experience section");
+        // Skills Database
+        const SKILLS_DATABASE = {
+            programming: {
+                keywords: ['python', 'javascript', 'java', 'c++', 'c#', 'php', 'ruby', 'go', 'rust', 'kotlin', 'swift', 'typescript', 'scala', 'r'],
+                variations: {'js': 'javascript', 'ts': 'typescript', 'py': 'python', 'cpp': 'c++'},
+                weight: 25
+            },
+            frontend: {
+                keywords: ['react', 'vue', 'angular', 'html', 'css', 'bootstrap', 'tailwind', 'sass', 'less', 'jquery', 'webpack', 'vite', 'next.js'],
+                variations: {'reactjs': 'react', 'vuejs': 'vue', 'angularjs': 'angular', 'nextjs': 'next.js'},
+                weight: 20
+            },
+            backend: {
+                keywords: ['node.js', 'express', 'django', 'flask', 'spring', 'laravel', 'rails', 'asp.net', 'fastapi', 'nestjs', 'koa'],
+                variations: {'nodejs': 'node.js', 'springboot': 'spring', 'expressjs': 'express'},
+                weight: 20
+            },
+            database: {
+                keywords: ['mysql', 'postgresql', 'mongodb', 'redis', 'sqlite', 'oracle', 'sql server', 'cassandra', 'elasticsearch', 'dynamodb'],
+                variations: {'postgres': 'postgresql', 'mongo': 'mongodb', 'sql': 'mysql'},
+                weight: 15
+            },
+            cloud: {
+                keywords: ['aws', 'azure', 'gcp', 'docker', 'kubernetes', 'jenkins', 'terraform', 'ansible', 'gitlab', 'github actions', 'ci/cd'],
+                variations: {'k8s': 'kubernetes', 'google cloud': 'gcp', 'amazon web services': 'aws'},
+                weight: 15
+            },
+            tools: {
+                keywords: ['git', 'jira', 'confluence', 'postman', 'figma', 'adobe', 'photoshop', 'vs code', 'intellij', 'eclipse'],
+                weight: 5
             }
+        };
+
+        const EXPERIENCE_LEVELS = {
+            senior: ['senior', 'lead', 'principal', 'architect', 'manager', 'head of', 'director', 'vp', 'cto', 'tech lead'],
+            mid: ['developer', 'engineer', 'analyst', 'consultant', 'specialist', '3+ years', '4+ years', '5+ years'],
+            junior: ['intern', 'trainee', 'associate', 'junior', 'entry level', 'graduate', 'fresher', '0-2 years']
+        };
+
+        // Advanced Resume Analysis Function
+        function analyzeResume(resumeText, jobDescription) {
+            const resume = resumeText.toLowerCase();
+            const jobDesc = jobDescription.toLowerCase();
             
-            // Quantified achievements
-            const achievements = resume.match(/\d+%|\$[\d,]+|\d+x|increased.*\d+|improved.*\d+|reduced.*\d+/gi);
-            if (achievements && achievements.length >= 2) {
-                resumeScore += 15;
-            } else if (achievements && achievements.length >= 1) {
-                resumeScore += 8;
-                suggestions.push("Add more quantified achievements");
-            } else {
-                suggestions.push("Include quantified achievements (e.g., 'Increased efficiency by 25%')");
-            }
+            const contactScore = analyzeContactInfo(resumeText);
+            const skillsAnalysis = analyzeSkills(resume, jobDesc);
+            const experienceAnalysis = analyzeExperience(resume, jobDesc);
+            const educationScore = analyzeEducation(resume);
+            const atsScore = analyzeATSCompatibility(resume);
+            const jdMatch = calculateJobMatch(resume, jobDesc);
             
-            // Skills Analysis (25 points)
-            const techSkills = ['javascript', 'python', 'java', 'react', 'node', 'sql', 'html', 'css', 'aws', 'docker', 'git'];
-            const foundSkills = techSkills.filter(skill => resumeLower.includes(skill));
-            resumeScore += Math.min(20, foundSkills.length * 2);
+            const resumeScore = Math.min(100, contactScore + skillsAnalysis.score + experienceAnalysis.score + educationScore);
+            const matchPercentage = jdMatch.percentage;
+            const potentialScore = Math.min(100, resumeScore + 15);
             
-            if (foundSkills.length < 5) {
-                suggestions.push("Include more relevant technical skills");
-            }
-            
-            if (resumeLower.includes('skills') || resumeLower.includes('technologies')) {
-                resumeScore += 5;
-            } else {
-                suggestions.push("Add a dedicated skills section");
-            }
-            
-            // Education (15 points)
-            if (resumeLower.includes('education') || resumeLower.includes('degree')) {
-                resumeScore += 10;
-            } else {
-                suggestions.push("Include your educational background");
-            }
-            
-            if (resumeLower.includes('bachelor') || resumeLower.includes('master') || resumeLower.includes('university')) {
-                resumeScore += 5;
-            }
-            
-            // Projects (15 points)
-            const projectCount = (resumeLower.match(/project/g) || []).length;
-            if (projectCount >= 2) {
-                resumeScore += 15;
-            } else if (projectCount >= 1) {
-                resumeScore += 8;
-                suggestions.push("Add more project details");
-            } else {
-                suggestions.push("Include relevant projects to showcase your skills");
-            }
-            
-            // Job Match Calculation
-            const jobWords = jobLower.split(/\W+/).filter(word => 
-                word.length > 3 && 
-                !['the', 'and', 'for', 'are', 'but', 'not', 'you', 'all', 'can', 'will', 'this', 'that', 'with', 'from', 'they', 'know', 'want', 'been', 'good', 'much', 'some', 'time', 'very', 'when', 'come', 'could', 'like', 'into', 'over', 'also', 'back', 'after', 'first', 'well', 'work', 'such', 'make', 'them', 'write', 'would'].includes(word)
-            );
-            
-            const resumeWords = resumeLower.split(/\W+/);
-            const matchedWords = jobWords.filter(word => resumeWords.includes(word));
-            const matchPercentage = Math.round((matchedWords.length / jobWords.length) * 100);
-            
-            // ATS Score
-            let atsScore = 0;
-            if (resumeLower.includes('experience')) atsScore += 25;
-            if (resumeLower.includes('skills')) atsScore += 20;
-            if (resumeLower.includes('education')) atsScore += 15;
-            if (emailFound) atsScore += 15;
-            if (resume.split(/\s+/).length > 200) atsScore += 15;
-            if (resume.includes('•') || resume.includes('-')) atsScore += 10;
-            
-            // Improvement potential
-            const potentialScore = Math.min(100, resumeScore + 20);
+            const suggestions = generateSuggestions(resumeText, jobDescription, {
+                contact: contactScore,
+                skills: skillsAnalysis,
+                experience: experienceAnalysis,
+                education: educationScore,
+                jdMatch: jdMatch
+            });
             
             return {
-                resumeScore: Math.min(100, resumeScore),
-                matchPercentage: Math.min(100, matchPercentage),
-                atsScore: Math.min(100, atsScore),
-                potentialScore: potentialScore,
-                suggestions: suggestions.slice(0, 6)
+                resumeScore: Math.round(resumeScore),
+                matchPercentage: Math.round(matchPercentage),
+                atsScore: Math.round(atsScore),
+                potentialScore: Math.round(potentialScore),
+                strengths: suggestions.strengths,
+                weaknesses: suggestions.weaknesses,
+                 improvements: suggestions.improvements  
             };
         }
 
+        function analyzeContactInfo(resumeText) {
+            let score = 0;
+            const resume = resumeText.toLowerCase();
+            
+            const emailRegex = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/;
+            if (emailRegex.test(resumeText)) score += 5;
+            
+            const phoneRegex = /(\+?\d{1,3}[-.\s]?)?\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}/;
+            if (phoneRegex.test(resumeText)) score += 5;
+            
+            if (resume.includes('linkedin') || resume.includes('/in/')) score += 5;
+            if (resume.includes('github') || resume.includes('portfolio') || resume.includes('website')) score += 5;
+            
+            return score;
+        }
+
+        function analyzeSkills(resume, jobDesc) {
+            let totalScore = 0;
+            let foundSkills = [];
+            let missingSkills = [];
+            
+            Object.keys(SKILLS_DATABASE).forEach(category => {
+                const categoryData = SKILLS_DATABASE[category];
+                const categorySkills = findSkillsInText(resume, categoryData);
+                const categoryJDSkills = findSkillsInText(jobDesc, categoryData);
+                
+                foundSkills.push(...categorySkills);
+                
+                categoryJDSkills.forEach(skill => {
+                    if (!categorySkills.includes(skill)) {
+                        missingSkills.push(skill);
+                    }
+                });
+                
+                const skillScore = Math.min(categoryData.weight, categorySkills.length * 3);
+                totalScore += skillScore;
+            });
+            
+            return {
+                score: Math.min(25, totalScore),
+                found: [...new Set(foundSkills)],
+                missing: [...new Set(missingSkills)]
+            };
+        }
+
+        function findSkillsInText(text, categoryData) {
+            const foundSkills = [];
+            
+            categoryData.keywords.forEach(skill => {
+                if (text.includes(skill)) {
+                    foundSkills.push(skill);
+                }
+            });
+            
+            if (categoryData.variations) {
+                Object.keys(categoryData.variations).forEach(variation => {
+                    if (text.includes(variation)) {
+                        foundSkills.push(categoryData.variations[variation]);
+                    }
+                });
+            }
+            
+            return foundSkills;
+        }
+
+        function analyzeExperience(resume, jobDesc) {
+            let score = 0;
+            
+            if (resume.includes('experience') || resume.includes('work history')) score += 10;
+            
+            const achievements = resume.match(/\d+[%$k+]|\d+\s*(percent|million|thousand|users|projects|team)/gi);
+            if (achievements) {
+                score += Math.min(10, achievements.length * 3);
+            }
+            
+            const resumeLevel = detectExperienceLevel(resume);
+            const requiredLevel = detectExperienceLevel(jobDesc);
+            
+            if (resumeLevel === requiredLevel) score += 5;
+            else if ((resumeLevel === 'senior' && requiredLevel === 'mid') || 
+                     (resumeLevel === 'mid' && requiredLevel === 'junior')) score += 3;
+            
+            return {
+                score: Math.min(25, score),
+                level: resumeLevel,
+                required: requiredLevel
+            };
+        }
+
+        function detectExperienceLevel(text) {
+            const seniorCount = EXPERIENCE_LEVELS.senior.filter(keyword => text.includes(keyword)).length;
+            const midCount = EXPERIENCE_LEVELS.mid.filter(keyword => text.includes(keyword)).length;
+            const juniorCount = EXPERIENCE_LEVELS.junior.filter(keyword => text.includes(keyword)).length;
+            
+            if (seniorCount > midCount && seniorCount > juniorCount) return 'senior';
+            if (midCount > juniorCount) return 'mid';
+            return 'junior';
+        }
+
+        function analyzeEducation(resume) {
+            let score = 0;
+            
+            const educationKeywords = ['bachelor', 'master', 'phd', 'degree', 'b.tech', 'm.tech', 'bsc', 'msc', 'mba'];
+            const foundEducation = educationKeywords.filter(keyword => resume.includes(keyword));
+            
+            if (foundEducation.length > 0) score += 10;
+            if (foundEducation.includes('master') || foundEducation.includes('phd')) score += 5;
+            
+            return Math.min(15, score);
+        }
+
+        function analyzeATSCompatibility(resume) {
+            let score = 0;
+            
+            const sections = ['experience', 'skills', 'education', 'contact'];
+            sections.forEach(section => {
+                if (resume.includes(section)) score += 20;
+            });
+            
+            if (resume.split(' ').length > 200) score += 15;
+            if (resume.includes('•') || resume.includes('-') || resume.includes('*')) score += 5;
+            
+            return Math.min(100, score);
+        }
+
+        function calculateJobMatch(resume, jobDesc) {
+            const resumeWords = extractRelevantWords(resume);
+            const jobWords = extractRelevantWords(jobDesc);
+            
+            const matchingWords = resumeWords.filter(word => jobWords.includes(word));
+            const percentage = Math.min(100, (matchingWords.length / jobWords.length) * 100);
+            
+            return {
+                percentage: percentage,
+                matching: matchingWords,
+                total: jobWords.length
+            };
+        }
+
+        function extractRelevantWords(text) {
+            const stopWords = ['the', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for', 'of', 'with', 'by'];
+            return text.split(/\s+/)
+                .map(word => word.toLowerCase().replace(/[^\w]/g, ''))
+                .filter(word => word.length > 3 && !stopWords.includes(word));
+        }
+
+        function generateSuggestions(resumeText, jobDesc, analysisData) {
+            const suggestions = {
+                improvements: [],
+                strengths: [],
+                weaknesses: []
+            };
+            
+            if (analysisData.contact < 15) {
+                if (!resumeText.includes('@')) suggestions.improvements.push("Add a professional email address");
+                if (!resumeText.toLowerCase().includes('linkedin')) suggestions.improvements.push("Include LinkedIn profile URL");
+            }
+            
+            if (analysisData.skills.missing.length > 0) {
+                suggestions.improvements.push(`Consider adding these skills: ${analysisData.skills.missing.slice(0, 4).join(', ')}`);
+            }
+            
+            const achievements = resumeText.match(/\d+[%$k+]/gi);
+            if (!achievements || achievements.length < 2) {
+                suggestions.improvements.push("Add quantified achievements (percentages, numbers, results)");
+            }
+            
+            if (analysisData.skills.found.length >= 5) {
+                suggestions.strengths.push("Strong technical skill set across multiple technologies");
+            }
+            
+            if (resumeText.toLowerCase().includes('led') || resumeText.toLowerCase().includes('managed')) {
+                suggestions.strengths.push("Leadership and management experience evident");
+            }
+            
+            if (achievements && achievements.length >= 2) {
+                suggestions.strengths.push("Good use of quantified achievements");
+            }
+            
+            if (analysisData.jdMatch.percentage < 30) {
+                suggestions.weaknesses.push("Low keyword overlap with job description");
+            }
+            
+            if (analysisData.skills.missing.length > 5) {
+                suggestions.weaknesses.push("Several required skills not mentioned in resume");
+            }
+            // Resume length check
+if (resumeText.split(/\s+/).length < 200) {
+    suggestions.weaknesses.push("Resume is too short, add more details.");
+}
+
+// Education check
+if (!resumeText.toLowerCase().includes("education")) {
+    suggestions.weaknesses.push("Education section missing.");
+}
+
+// Experience check
+if (!resumeText.toLowerCase().includes("experience")) {
+    suggestions.weaknesses.push("Experience section missing.");
+}
+
+            return suggestions;
+        }
+
         function displayResults(results) {
-            // Animate counters
+            currentResults = results;
+            
             setTimeout(() => animateCounter('resumeScore', results.resumeScore), 200);
             setTimeout(() => animateCounter('matchScore', results.matchPercentage, '%'), 400);
             setTimeout(() => animateCounter('atsScore', results.atsScore), 600);
             setTimeout(() => animateCounter('potentialScore', results.potentialScore), 800);
             
-            // Display suggestions
             const suggestionsList = document.getElementById('suggestionsList');
             suggestionsList.innerHTML = '';
             
-            if (results.suggestions.length === 0) {
-                suggestionsList.innerHTML = '<div class="suggestion-item">🎉 Excellent! Your resume is well-optimized for this position.</div>';
-            } else {
-                results.suggestions.forEach((suggestion, index) => {
-                    setTimeout(() => {
-                        const div = document.createElement('div');
-                        div.className = 'suggestion-item';
-                        div.innerHTML = `💡 ${suggestion}`;
-                        suggestionsList.appendChild(div);
-                    }, index * 200);
-                });
+            if ((!results.improvements || results.improvements.length === 0) &&
+    (!results.weaknesses || results.weaknesses.length === 0)) {
+    
+    suggestionsList.innerHTML = '<div class="suggestion-item">🎉 Excellent! Your resume is well-optimized for this position.</div>';
+} else {
+    // combine improvements + weaknesses + strengths for display
+    const combined = [
+        ...(results.improvements || []),
+        ...(results.weaknesses || []),
+        ...(results.strengths || [])
+    ];
+
+    combined.forEach((suggestion, index) => {
+        setTimeout(() => {
+            const div = document.createElement('div');
+            div.className = 'suggestion-item';
+            div.innerHTML = `💡 ${suggestion}`;
+            suggestionsList.appendChild(div);
+        }, index * 200);
+    });
+}
+
+            
+            const downloadBtn = document.getElementById('downloadReport');
+            if (downloadBtn) {
+                downloadBtn.style.display = 'block';
             }
         }
 
@@ -1780,37 +1995,6 @@ Key Requirements:
             }, 40);
         }
 
-        function generateSampleResume() {
-            return `John Doe
-Email: john.doe@email.com | Phone: +1234567890
-LinkedIn: linkedin.com/in/johndoe | GitHub: github.com/johndoe
-
-PROFESSIONAL EXPERIENCE
-Software Developer - Tech Company (2020-2023)
-• Developed web applications using JavaScript, React, and Node.js
-• Collaborated with teams using Agile methodologies
-• Implemented REST APIs and improved performance by 25%
-• Built 5+ full-stack applications serving 1000+ users
-
-TECHNICAL SKILLS
-Programming: JavaScript, Python, Java, SQL
-Frameworks: React, Node.js, Express, Django
-Databases: MySQL, MongoDB, PostgreSQL
-Tools: Git, Docker, AWS, Jenkins
-
-EDUCATION
-Bachelor of Science in Computer Science
-University of Technology (2016-2020)
-GPA: 3.7/4.0
-
-PROJECTS
-E-commerce Web Application
-• Built full-stack application with React and Node.js
-• Integrated payment processing and authentication
-• Deployed on AWS with CI/CD pipeline`;
-        }
-
-        // Documentation Section Toggle
         function toggleDocsCard(header) {
             const content = header.nextElementSibling;
             const icon = header.querySelector('.docs-expand-icon');
@@ -1825,8 +2009,181 @@ E-commerce Web Application
             }
         }
 
-        // Smooth scrolling for navigation links
+        // PDF Report Generation
+        function generatePDFReport() {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+
+    // === COLOR PALETTE ===
+    const primaryGold = [184, 134, 11];
+    const blackText   = [0, 0, 0];
+    const whiteText   = [255, 255, 255];
+    const grayText    = [80, 80, 80];
+    const lightBg     = [248, 249, 250];
+    const blackBg     = [0, 0, 0];
+
+    let yPos = 20;
+
+    // === HEADER ===
+    doc.setFillColor(...blackBg);
+    doc.rect(0, 0, 210, 30, 'F');
+
+    // Logo box
+    doc.setFillColor(...primaryGold);
+    doc.rect(15, 8, 14, 14, 'F');
+    doc.setFontSize(14);
+    doc.setTextColor(...blackBg);
+    doc.text('AI', 18, 17);
+
+    // Branding
+    doc.setFontSize(18);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(...primaryGold);
+    doc.text('AI RESUME INTELLIGENCE', 35, 15);
+
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'italic');
+    doc.setTextColor(...whiteText);
+    doc.text('Empowering Careers with Data-Driven Insights', 35, 22);
+
+    // Right side info
+    doc.setFontSize(8);
+    doc.setTextColor(...whiteText);
+    doc.text('Report by: Ambuj Kumar Tripathi', 130, 14);
+    doc.text('LinkedIn: linkedin.com/in/ambuj-tripathi-042b4a118', 130, 18);
+    doc.text('GitHub: github.com/Ambuj123-lab', 130, 22);
+
+    // === TITLE ===
+    yPos = 45;
+    doc.setFontSize(18);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(...blackText);
+    doc.text('RESUME ANALYSIS REPORT', 20, yPos);
+
+    yPos += 15;
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(...grayText);
+    doc.text(`Generated on: ${new Date().toLocaleDateString()}`, 20, yPos);
+
+    yPos += 10;
+    doc.setDrawColor(...primaryGold);
+    doc.setLineWidth(0.5);
+    doc.line(20, yPos, 190, yPos);
+
+    // === SCORE BOX ===
+    yPos += 15;
+    doc.setFillColor(...lightBg);
+    doc.rect(20, yPos, 170, 45, 'F');
+    doc.setDrawColor(...primaryGold);
+    doc.rect(20, yPos, 170, 45, 'S');
+
+    doc.setFontSize(14);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(...blackText);
+    doc.text('SCORE SUMMARY', 25, yPos + 12);
+
+    const scores = [
+        { label: 'Resume Score', value: currentResults.resumeScore, unit: '/100' },
+        { label: 'JD Match', value: currentResults.matchPercentage, unit: '%' },
+        { label: 'ATS Score', value: currentResults.atsScore, unit: '/100' },
+        { label: 'Potential', value: currentResults.potentialScore, unit: '/100' }
+    ];
+
+    doc.setFontSize(10);
+    scores.forEach((score, index) => {
+        const xOffset = 25 + (index * 40);
+        doc.setFont('helvetica', 'normal');
+        doc.setTextColor(...grayText);
+        doc.text(score.label, xOffset, yPos + 25);
+
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(12);
+        doc.setTextColor(...primaryGold);
+        doc.text(`${score.value}${score.unit}`, xOffset, yPos + 35);
+        doc.setFontSize(10);
+    });
+
+    yPos += 55;
+
+    // === STRONG AREAS ===
+    doc.setFontSize(14);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(...blackText);
+    doc.text('STRONG AREAS', 20, yPos);
+
+    yPos += 10;
+    if (currentResults.strengths && currentResults.strengths.length > 0) {
+        currentResults.strengths.forEach(strength => {
+            const cleanStrength = strength.replace(/[^\x20-\x7E]/g, "");
+            const lines = doc.splitTextToSize(`✓ ${cleanStrength}`, 160);
+            doc.setFontSize(10);
+            doc.setTextColor(...blackText);
+            doc.text(lines, 25, yPos);
+            yPos += (lines.length * 6) + 2;
+        });
+    }
+
+    // === AREAS FOR IMPROVEMENT ===
+    yPos += 15;
+    doc.setFontSize(14);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(...blackText);
+    doc.text('AREAS FOR IMPROVEMENT', 20, yPos);
+
+    yPos += 10;
+    if (currentResults.weaknesses && currentResults.weaknesses.length > 0) {
+        currentResults.weaknesses.forEach(gap => {
+            const cleanGap = gap.replace(/[^\x20-\x7E]/g, "");
+            const lines = doc.splitTextToSize(`⚠ ${cleanGap}`, 160);
+            doc.setFontSize(10);
+            doc.setTextColor(...blackText);
+            doc.text(lines, 25, yPos);
+            yPos += (lines.length * 6) + 2;
+        });
+    }
+
+    // === DISCLAIMER ===
+    yPos += 20;
+    doc.setFontSize(12);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(...blackText);
+    doc.text('DISCLAIMER', 20, yPos);
+
+    yPos += 10;
+    doc.setFontSize(9);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(...grayText);
+
+    const disclaimerPoints = [
+        "This analysis is generated using rule-based algorithms and keyword matching techniques.",
+        "Scores are calculated based on predefined criteria and may not reflect actual hiring decisions.",
+        "This tool is designed for educational and improvement purposes only.",
+        "Results should be used as guidance, not definitive career advice.",
+        "For professional career consultation, please consult certified career counselors.",
+        "The system analyzes text patterns, contact info, skills matching, and ATS compatibility.",
+        "Accuracy depends on resume format and content clarity."
+    ];
+
+    disclaimerPoints.forEach(point => {
+        const lines = doc.splitTextToSize(`• ${point}`, 170);
+        doc.text(lines, 25, yPos);
+        yPos += (lines.length * 6) + 2;
+    });
+
+    // === FOOTER ===
+    doc.setFontSize(8);
+    doc.setFont('helvetica', 'italic');
+    doc.setTextColor(...grayText);
+    doc.text('© 2025 Resume Intelligence by Ambuj Kumar Tripathi', 105, 290, { align: 'center' });
+
+    // === SAVE FILE ===
+    doc.save("Resume_Analysis_Report.pdf");
+}
+
+        // Event Listeners
         document.addEventListener('DOMContentLoaded', function() {
+            // Smooth scrolling
             const navLinks = document.querySelectorAll('a[href^="#"]');
             navLinks.forEach(link => {
                 link.addEventListener('click', function(e) {
@@ -1841,46 +2198,57 @@ E-commerce Web Application
                     }
                 });
             });
+
+            // Button event listeners
+            setTimeout(() => {
+                const btn = document.getElementById('analyzeBtn');
+                if (btn) {
+                    btn.addEventListener('click', performAnalysis);
+                }
+                
+                const downloadBtn = document.getElementById('downloadReport');
+                if (downloadBtn) {
+                    downloadBtn.addEventListener('click', generatePDFReport);
+                }
+
+                checkAnalyzeButton();
+            }, 500);
         });
 
-        // Initialize
-        checkAnalyzeButton();
-    </script>
-    <script>
-    if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-            navigator.serviceWorker.register('/sw.js')
-                .then(reg => console.log('✅ Service Worker: Registered', reg))
-                .catch(err => console.log(`❌ Service Worker: Registration Error: ${err}`));
-        });
-    }
-
-    let deferredPrompt;
-    const installBtn = document.getElementById('pwa-install-button');
-
-    window.addEventListener('beforeinstallprompt', (e) => {
-        e.preventDefault();
-        deferredPrompt = e;
-        if (installBtn) {
-            installBtn.style.display = 'inline-block';
+        // PWA Install
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(reg => console.log('✅ Service Worker: Registered', reg))
+                    .catch(err => console.log(`❌ Service Worker: Registration Error: ${err}`));
+            });
         }
-    });
 
-    if (installBtn) {
-        installBtn.addEventListener('click', () => {
-            if (deferredPrompt) {
-                deferredPrompt.prompt();
-                deferredPrompt = null;
+        let deferredPrompt;
+        const installBtn = document.getElementById('pwa-install-button');
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            if (installBtn) {
+                installBtn.style.display = 'inline-block';
             }
         });
-    }
 
-    window.addEventListener('appinstalled', () => {
         if (installBtn) {
-            installBtn.style.display = 'none';
+            installBtn.addEventListener('click', () => {
+                if (deferredPrompt) {
+                    deferredPrompt.prompt();
+                    deferredPrompt = null;
+                }
+            });
         }
-    });
 
-</script>
+        window.addEventListener('appinstalled', () => {
+            if (installBtn) {
+                installBtn.style.display = 'none';
+            }
+        });
+    </script>
 </body>
 </html>
